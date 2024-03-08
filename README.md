@@ -7,8 +7,9 @@ Mainly prototypes and testing
 Run the below tests using the automated test tool Cypress by running the below command:
 ```
 npm run cypress:e2e   # commandline headless
-npm run cypress:      # runs in chrome for more details
+npm run cypress       # runs in chrome for more details
 ```
+Add new tests to /cypress/e2e/general.cy.js
 
 ### HTML Validate
 

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+      <meta charset="utf-8" />
+      <title>Drag and Drop</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <main>
+      <h1>Drag and Drop</h1>
+      <div id="dragTarget">Drop Here</div>
+      <br>
+      <div>
+        <a href="https://www.hawaiipictures.com">Image from  HawaiiPictures.com</a>
+        <br>
+        <img 
+          draggable="true"
+          id="dragSource"
+          src="https://www.hawaiipictures.com/cdn/shop/t/4/assets/slide_1.jpg"
+          width="300"
+          height="300"
+          > 
+      </div>
+    </main>
+    <style>
+      #dragTarget {
+        width: 300px;
+        height: 300px;
+        padding: 1rem;
+        border: 1px solid black;
+        background-color: #aaa;
+      }
+    </style>
+    <script>
+      /*
+      Drag & Drop API:
+      ondrag - element is being dragged
+      ondragstart - callback function to be executed when the drag starts
+      ondragenter - whether or not the drop target is to accept the drop 
+        (accepted, then this event has to be canceled)
+      ondragleave - mouse leaves an element before a valid drop target
+      ondragover - where the dragged data can be dropped
+      ondrop - where the drop has occurred at the end of the drag operation
+      ondragend - when the user has finished dragging an element.
+      */
+      document.addEventListener("DOMContentLoaded", function() {
+        function handleDragStart(e) {
+          e.dataTransfer.setData("text", e.target.id);
+        }
+
+        function handleDrop(e) {
+          e.preventDefault();
+          const data = e.dataTransfer.getData("text");
+          e.target.appendChild(document.getElementById(data));
+          e.target.innerHTML += "Dropped";
+        }
+
+        function handleDragOver(e) {
+          e.preventDefault();
+        }
+
+        const dragSourceEl = document.getElementById("dragSource");
+        dragSourceEl.addEventListener("dragstart", handleDragStart);
+
+        const dragTargetEl = document.getElementById("dragTarget");
+        dragTargetEl.addEventListener("drop", handleDrop);
+        dragTargetEl.addEventListener("dragover", handleDragOver);
+      });
+    </script>
+  </body>
+</html>
