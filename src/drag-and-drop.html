@@ -32,39 +32,51 @@
       }
     </style>
     <script>
-      /*
-      Drag & Drop API:
-      ondrag - element is being dragged
-      ondragstart - callback function to be executed when the drag starts
-      ondragenter - whether or not the drop target is to accept the drop 
-        (accepted, then this event has to be canceled)
-      ondragleave - mouse leaves an element before a valid drop target
-      ondragover - where the dragged data can be dropped
-      ondrop - where the drop has occurred at the end of the drag operation
-      ondragend - when the user has finished dragging an element.
-      */
       document.addEventListener("DOMContentLoaded", function() {
+        // See: 
+        // https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
+
+        const dragStartImg = new Image();
+        dragStartImg.src = "https://www.hawaiipictures.com/cdn/shop/t/4/assets/slide_1.jpg";
         function handleDragStart(e) {
-          e.dataTransfer.setData("text", e.target.id);
+          e.dataTransfer.setDragImage(dragStartImg, 10, 10);    // 10=offset from cursor
+          e.dataTransfer.setData("text/plain", e.target.id);    // dataTransfer property that holds the event's data
+          //e.dataTransfer.effectAllowed = "copy";              // copy|move|link, only needs to be set on dragOver
+        }
+
+        function handleDragOver(e) {
+          e.preventDefault();                                   // Required to allow drop
+          e.dataTransfer.dropEffect = "copy";                   // move doesn't work?
+          e.target.style.backgroundColor = "green";
+        }
+
+        function handleDragLeave(e) {
+          e.target.style.backgroundColor = "";
         }
 
         function handleDrop(e) {
-          e.preventDefault();
+          const isLink = event.dataTransfer.types.includes("text/uri-list");
+          if (isLink) { e.preventDefault(); }                   // Useful if a E.g. link to stop navigation
           const data = e.dataTransfer.getData("text");
           e.target.appendChild(document.getElementById(data));
           e.target.innerHTML += "Dropped";
         }
 
-        function handleDragOver(e) {
-          e.preventDefault();
-        }
-
+        function handleDragEnd(e) {
+          if (e.target.parentElement) {
+            e.target.parentElement.style.backgroundColor = "grey";
+            console.log(e.target.parentElement);                // TODO: seems to only catch on a failed drop
+          }
+        } 
+  
         const dragSourceEl = document.getElementById("dragSource");
         dragSourceEl.addEventListener("dragstart", handleDragStart);
+        dragSourceEl.addEventListener("dragend", handleDragEnd);
 
         const dragTargetEl = document.getElementById("dragTarget");
-        dragTargetEl.addEventListener("drop", handleDrop);
         dragTargetEl.addEventListener("dragover", handleDragOver);
+        dragTargetEl.addEventListener("dragleave", handleDragLeave);
+        dragTargetEl.addEventListener("drop", handleDrop);      // To become a dropzone requires both drop and dragover
       });
     </script>
   </body>
