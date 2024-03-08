@@ -18,6 +18,7 @@ describe("Pages", () => {
     { title: "radios-checkboxes", path: "/src/radios-checkboxes.html" },
     { title: "tables", path: "/src/tables.html" },
     { title: "tabs", path: "/src/tabs.html" },
+    { title: "speech-to-text", path: "/src/speech-to-text/index.html" },
   ])(
     (page) => `${page.title} Test`,
     ({ path }) => {
