@@ -4,79 +4,152 @@
       <meta charset="utf-8" />
       <title>Drag and Drop</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        .listsContainer {
+          display:flex
+        }
+        .listContainer {
+          margin-right:2rem;
+        }
+        .draggableList {
+          list-style-type: none;
+          border: 2px solid black;
+          border-radius: 10px;
+          padding: .5rem;
+        }
+        .draggableList li {
+          padding: 1rem;
+          text-align: center;
+          cursor: move;
+        }
+        .draggableList li div {
+          height: 1rem;
+          width: 8rem;
+          padding: .5rem;
+          border-radius: 10px;
+          background-color: #ccc;
+          border: 2px solid black;
+        }
+        .draggableList li.dragElem {
+          opacity: 0.4;
+        }
+        .draggableList li.dragOver {
+          border-top: 4px dashed green;
+        }
+        [draggable] {
+          -moz-user-select: none;
+          -khtml-user-select: none;
+          -webkit-user-select: none;
+          user-select: none;
+        }
+      </style>
   </head>
   <body>
     <main>
       <h1>Drag and Drop</h1>
-      <div id="dragTarget">Drop Here</div>
-      <br>
-      <div>
-        <a href="https://www.hawaiipictures.com">Image from  HawaiiPictures.com</a>
-        <br>
-        <img 
-          draggable="true"
-          id="dragSource"
-          src="https://www.hawaiipictures.com/cdn/shop/t/4/assets/slide_1.jpg"
-          width="300"
-          height="300"
-          > 
+      <div class="listsContainer">
+        <div class="listContainer">
+          <h2 id="list1-title">List 1</h2>
+          <ul id="list1" class="draggableList" aria-labelledby="list1-title">
+            <li id="l1-1" draggable="true"><div>A1</div></li>
+            <li id="l1-2" draggable="true"><div>B1</div></li>
+            <li id="l1-3" draggable="true"><div>l1</div></li>
+            <li id="l1-4" draggable="true"><div>D1</div></li>
+            <li id="l1-5" draggable="true"><div>E1</div></li>
+          </ul>
+        </div>
+        <div class="listContainer">
+          <h2 id="list2-title">List 2</h2>
+          <ul id="list2" class="draggableList" aria-labelledby="list2-title">
+            <li id="l2-1" draggable="true"><div>A2</div></li>
+            <li id="l2-2" draggable="true"><div>B2</div></li>
+            <li id="l2-3" draggable="true"><div>l2</div></li>
+            <li id="l2-4" draggable="true"><div>D2</div></li>
+            <li id="l2-5" draggable="true"><div>E2</div></li>
+          </ul>
+        </div>
+        <div class="listContainer">
+          <h2 id="list3-title">List 3</h2>
+          <ul id="list3" class="draggableList" aria-labelledby="list3-title">
+            <li id="l3-1" draggable="true"><div>A3</div></li>
+            <li id="l3-2" draggable="true"><div>B3</div></li>
+            <li id="l3-3" draggable="true"><div>l3</div></li>
+            <li id="l3-4" draggable="true"><div>D3</div></li>
+            <li id="l3-5" draggable="true"><div>E3</div></li>
+          </ul>
+        </div>
       </div>
     </main>
-    <style>
-      #dragTarget {
-        width: 300px;
-        height: 300px;
-        padding: 1rem;
-        border: 1px solid black;
-        background-color: #aaa;
-      }
-    </style>
     <script>
+      function handleDragStart(e) {
+        sourceEl = e.target;
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text", `${e.target.id},${e.target.parentElement.id}`); // Move by Ids
+        e.target.classList.add("dragElem");
+      }
+
+      function handleDragOver(e) {
+        if (e.preventDefault) { e.preventDefault(); } // Allows drop
+        e.dataTransfer.dropEffect = "move";
+        e.target.classList.add("dragOver");
+      }
+
+      function handleDragEnter(e) {
+        // this / e.target = current hover target
+      }
+
+      function handleDragLeave(e) {
+        e.target.classList.remove("dragOver");
+      }
+
+      function handleDrop(e) {
+        // Useful if a E.g. link to stop navigation
+        const isLink = event.dataTransfer.types.includes("text/uri-list");
+        if (isLink) { e.preventDefault(); }
+        // Pull data from detData API to get elements
+        const [sourceId, parentId] = e.dataTransfer.getData("text").split(",");
+        const sourceEl = document.getElementById(sourceId);
+        const parentSourceEl = document.getElementById(parentId);
+        const targetEl = e.target;
+        // Stop if dragged onto self
+        let droppedEl;
+        if (sourceEl != targetEl) {
+          parentSourceEl.removeChild(sourceEl);
+          targetEl.insertAdjacentHTML("beforebegin", sourceEl.outerHTML);
+          droppedEl = targetEl.previousSibling;
+          droppedEl.classList.remove("dragElem");
+          addDnDHandlers(droppedEl);
+        }
+        // Clean up
+        targetEl.classList.remove("dragOver");
+      }
+
+      function handleDragEnd(e) {
+        e.target.classList.remove("dragOver");
+        e.target.classList.remove("dragElem");
+      }
+
+      function addDnDHandlers(elem) {
+        elem.addEventListener("dragstart", handleDragStart, false);
+        elem.addEventListener("dragenter", handleDragEnter, false)
+        elem.addEventListener("dragover", handleDragOver, false);
+        elem.addEventListener("dragleave", handleDragLeave, false);
+        elem.addEventListener("drop", handleDrop, false);
+        elem.addEventListener("dragend", handleDragEnd, false);
+      }
+
       document.addEventListener("DOMContentLoaded", function() {
         // See: 
         // https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
 
-        const dragStartImg = new Image();
-        dragStartImg.src = "https://www.hawaiipictures.com/cdn/shop/t/4/assets/slide_1.jpg";
-        function handleDragStart(e) {
-          e.dataTransfer.setDragImage(dragStartImg, 10, 10);    // 10=offset from cursor
-          e.dataTransfer.setData("text/plain", e.target.id);    // dataTransfer property that holds the event's data
-          //e.dataTransfer.effectAllowed = "copy";              // copy|move|link, only needs to be set on dragOver
-        }
+        const list1 = document.querySelectorAll("#list1 li");
+        [].forEach.call(list1, addDnDHandlers);
 
-        function handleDragOver(e) {
-          e.preventDefault();                                   // Required to allow drop
-          e.dataTransfer.dropEffect = "copy";                   // move doesn't work?
-          e.target.style.backgroundColor = "green";
-        }
+        const list2 = document.querySelectorAll("#list2 li");
+        [].forEach.call(list2, addDnDHandlers);
 
-        function handleDragLeave(e) {
-          e.target.style.backgroundColor = "";
-        }
-
-        function handleDrop(e) {
-          const isLink = event.dataTransfer.types.includes("text/uri-list");
-          if (isLink) { e.preventDefault(); }                   // Useful if a E.g. link to stop navigation
-          const data = e.dataTransfer.getData("text");
-          e.target.appendChild(document.getElementById(data));
-          e.target.innerHTML += "Dropped";
-        }
-
-        function handleDragEnd(e) {
-          if (e.target.parentElement) {
-            e.target.parentElement.style.backgroundColor = "grey";
-            console.log(e.target.parentElement);                // TODO: seems to only catch on a failed drop
-          }
-        } 
-  
-        const dragSourceEl = document.getElementById("dragSource");
-        dragSourceEl.addEventListener("dragstart", handleDragStart);
-        dragSourceEl.addEventListener("dragend", handleDragEnd);
-
-        const dragTargetEl = document.getElementById("dragTarget");
-        dragTargetEl.addEventListener("dragover", handleDragOver);
-        dragTargetEl.addEventListener("dragleave", handleDragLeave);
-        dragTargetEl.addEventListener("drop", handleDrop);      // To become a dropzone requires both drop and dragover
+        const list3 = document.querySelectorAll("#list3 li");
+        [].forEach.call(list3, addDnDHandlers);
       });
     </script>
   </body>
