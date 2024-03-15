@@ -57,36 +57,50 @@
   <body>
     <main>
       <h1>Drag and Drop</h1>
+      <hr />
+<pre>
+Notes
+-role=listbox & role=option adds well understood semantics for selectable items. role=option tells a user s/he can select this
+-aria-roledescription describe the custom widget. Normally AT would include the original role but not a listbox (JAWS/NVDA), so added "listbox" to the description
+-announcing a selected it is done using live-regions orver aria-checked. aria-checked state changes do not seem to be announced
+        -aria-checked would have been used over aria-pressed because of better AT support
+-aria-grabbed and aria-dropeffect are not full implemented by AT (deprecated in ARIA 1.1) so not used
+-Refs: <a href="https://www.tpgi.com/the-road-to-accessible-drag-and-drop-part-2">The Road to Accessible Drag and Drop</a>, 
+
+Todo
+-add multi-select. Maybe <kbd>shift+space</kbd>
+</pre>
+      <hr />
       <div class="listsContainer">
+        <div id="list-description" class="sr-only">Navigate between lists using tab and arrow keys within the list. Select an item with <kbd>spacebar</kbd> and drop drop it in position with <kbd>enter"</kbd></div>
         <div class="listContainer">
           <h2 id="list1-title">List 1</h2>
-          <div id="list1-description" class="sr-only">Navigate between lists using tab and arrow keys within the list. Select an item with <kbd>spacebar</kbd> and drop drop it in position with <kbd>enter"</kbd></div>
-          <ul id="list1" class="draggableList" aria-labelledby="list1-title" tabindex="0" aria-describedby="list1-description">
-            <li id="l1-1" draggable="true" tabindex="-1"><div>A1</div></li>
-            <li id="l1-2" draggable="true" tabindex="-1"><div>B1</div></li>
-            <li id="l1-3" draggable="true" tabindex="-1"><div>C1</div></li>
-            <li id="l1-4" draggable="true" tabindex="-1"><div>D1</div></li>
-            <li id="l1-5" draggable="true" tabindex="-1"><div>E1</div></li>
+          <ul id="list1" class="draggableList" aria-labelledby="list1-title" tabindex="0" aria-describedby="list-description" role="listbox" aria-roledescription="listbox drag and drop">
+            <li id="l1-1" draggable="true" role="option" tabindex="-1" aria-selected="false"><div>A1</div></li>
+            <li id="l1-2" draggable="true" role="option" tabindex="-1"><div>B1</div></li>
+            <li id="l1-3" draggable="true" role="option" tabindex="-1"><div>C1</div></li>
+            <li id="l1-4" draggable="true" role="option" tabindex="-1"><div>D1</div></li>
+            <li id="l1-5" draggable="true" role="option" tabindex="-1"><div>E1</div></li>
           </ul>
         </div>
         <div class="listContainer">
           <h2 id="list2-title">List 2</h2>
-          <ul id="list2" class="draggableList" aria-labelledby="list2-title" tabindex="0">
-            <li id="l2-1" draggable="true" tabindex="-1"><div>A2</div></li>
-            <li id="l2-2" draggable="true" tabindex="-1"><div>B2</div></li>
-            <li id="l2-3" draggable="true" tabindex="-1"><div>C2</div></li>
-            <li id="l2-4" draggable="true" tabindex="-1"><div>D2</div></li>
-            <li id="l2-5" draggable="true" tabindex="-1"><div>E2</div></li>
+          <ul id="list2" class="draggableList" aria-labelledby="list2-title" tabindex="0" aria-describedby="list-description" role="listbox" aria-roledescription="listbox drag and drop">
+            <li id="l2-1" draggable="true" role="option" tabindex="-1"><div>A2</div></li>
+            <li id="l2-2" draggable="true" role="option" tabindex="-1"><div>B2</div></li>
+            <li id="l2-3" draggable="true" role="option" tabindex="-1"><div>C2</div></li>
+            <li id="l2-4" draggable="true" role="option" tabindex="-1"><div>D2</div></li>
+            <li id="l2-5" draggable="true" role="option" tabindex="-1"><div>E2</div></li>
           </ul>
         </div>
         <div class="listContainer">
           <h2 id="list3-title">List 3</h2>
-          <ul id="list3" class="draggableList" aria-labelledby="list3-title" tabindex="0">
-            <li id="l3-1" draggable="true" tabindex="-1"><div>A3</div></li>
-            <li id="l3-2" draggable="true" tabindex="-1"><div>B3</div></li>
-            <li id="l3-3" draggable="true" tabindex="-1"><div>C3</div></li>
-            <li id="l3-4" draggable="true" tabindex="-1"><div>D3</div></li>
-            <li id="l3-5" draggable="true" tabindex="-1"><div>E3</div></li>
+          <ul id="list3" class="draggableList" aria-labelledby="list3-title" tabindex="0" aria-describedby="list-description" role="listbox" aria-roledescription="listbox drag and drop">
+            <li id="l3-1" draggable="true" role="option" tabindex="-1"><div>A3</div></li>
+            <li id="l3-2" draggable="true" role="option" tabindex="-1"><div>B3</div></li>
+            <li id="l3-3" draggable="true" role="option" tabindex="-1"><div>C3</div></li>
+            <li id="l3-4" draggable="true" role="option" tabindex="-1"><div>D3</div></li>
+            <li id="l3-5" draggable="true" role="option" tabindex="-1"><div>E3</div></li>
           </ul>
         </div>
       </div>
@@ -154,7 +168,6 @@
       }
 
       function focusNext(e, children, direction="down") {
-        // const children = el.querySelectorAll(childrenSelector);
         const index = Array.from(children).indexOf(document.activeElement);
         const nextIndex = index + (direction==="down" ? 1 : -1);
         if (nextIndex < 0 || nextIndex >= children.length) {
@@ -171,25 +184,27 @@
           switch (e.key) {
             case "ArrowDown":
               focusNext(e, el.querySelectorAll(childrenSelector));
+              e.preventDefault();
               break;
             case "ArrowUp":
               focusNext(e, el.querySelectorAll(childrenSelector), "up");
+              e.preventDefault();
               break;
             case " ":
               dragData = `${e.target.id},${e.target.parentElement.id}`;
               e.target.classList.add("dragElem");
               announce(`Item selected with text ${e.target.textContent}.`);
+              e.preventDefault();
               break;
             case "Enter":
               if (dragData) {
                 handleDrop(e, dragData);
+                e.preventDefault();
               }
               break;
             default:
               return;
           }
-
-          e.preventDefault();
         });
       }
 
