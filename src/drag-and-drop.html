@@ -78,10 +78,22 @@ Notes
 -announcing a selected it is done using live-regions orver aria-checked. aria-checked state changes do not seem to be announced
         -aria-checked would have been used over aria-pressed because of better AT support
 -aria-grabbed and aria-dropeffect are not full implemented by AT (deprecated in ARIA 1.1) so not used
--Refs: <a href="https://www.tpgi.com/the-road-to-accessible-drag-and-drop-part-2">[1]</a>, 
+-Refs: <a href="https://www.tpgi.com/the-road-to-accessible-drag-and-drop-part-2">[1]</a>, <a href="https://www.w3.org/WAI/ARIA/apg/patterns/treeview/">[2]</a>, <a href="https://dequeuniversity.com/library/aria/tree-view">[3]</a>
 
 Todo
 -add multi-select? Maybe key <kbd>shift+space</kbd> and add to array. Change drag to click and add to array.. But prefer drag interaction for now
+-add tree semantics, see ref [2] add expand/collaps using right/left arrows
+  nav
+  aria-label=ABOUT
+    role=tree
+      role=none
+      aria-label=ABOUT
+        role=treeitem
+      role=none
+      aria-label=ABOUT
+        role=treeitem
+        aria-expanded=BOOLEAN
+        aria-owns=BRANCH
 </pre>
       <hr />
       <div class="listsContainer">
