@@ -57,6 +57,14 @@
           background-color: lightgreen;
           transition: background-color 1s ease-in;
         }
+
+        .draggableTree {
+          list-style-type: none;
+          border: 0;
+          border-left: 2px solid black;
+          border-radius: 0;
+          padding: .5rem;
+        }
       </style>
   </head>
   <body>
@@ -70,10 +78,10 @@ Notes
 -announcing a selected it is done using live-regions orver aria-checked. aria-checked state changes do not seem to be announced
         -aria-checked would have been used over aria-pressed because of better AT support
 -aria-grabbed and aria-dropeffect are not full implemented by AT (deprecated in ARIA 1.1) so not used
--Refs: <a href="https://www.tpgi.com/the-road-to-accessible-drag-and-drop-part-2">The Road to Accessible Drag and Drop</a>, 
+-Refs: <a href="https://www.tpgi.com/the-road-to-accessible-drag-and-drop-part-2">[1]</a>, 
 
 Todo
--add multi-select. Maybe <kbd>shift+space</kbd>
+-add multi-select? Maybe key <kbd>shift+space</kbd> and add to array. Change drag to click and add to array.. But prefer drag interaction for now
 </pre>
       <hr />
       <div class="listsContainer">
@@ -81,31 +89,117 @@ Todo
         <div class="listContainer">
           <h2 id="list1-title">List 1</h2>
           <ul id="list1" class="draggableList" aria-labelledby="list1-title" tabindex="0" aria-describedby="list-description" role="listbox" aria-roledescription="listbox drag and drop">
-            <li id="l1-1" draggable="true" role="option" tabindex="-1" aria-selected="false"><div>A1</div></li>
-            <li id="l1-2" draggable="true" role="option" tabindex="-1"><div>B1</div></li>
-            <li id="l1-3" draggable="true" role="option" tabindex="-1"><div>C1</div></li>
-            <li id="l1-4" draggable="true" role="option" tabindex="-1"><div>D1</div></li>
-            <li id="l1-5" draggable="true" role="option" tabindex="-1"><div>E1</div></li>
+            <li id="l1-1" draggable="true" role="option" tabindex="-1" aria-selected="false"><div>1A</div></li>
+            <li id="l1-2" draggable="true" role="option" tabindex="-1"><div>1B</div></li>
+            <li id="l1-3" draggable="true" role="option" tabindex="-1"><div>1C</div></li>
+            <li id="l1-4" draggable="true" role="option" tabindex="-1"><div>1D</div></li>
+            <li id="l1-5" draggable="true" role="option" tabindex="-1"><div>1E</div></li>
           </ul>
         </div>
         <div class="listContainer">
           <h2 id="list2-title">List 2</h2>
           <ul id="list2" class="draggableList" aria-labelledby="list2-title" tabindex="0" aria-describedby="list-description" role="listbox" aria-roledescription="listbox drag and drop">
-            <li id="l2-1" draggable="true" role="option" tabindex="-1"><div>A2</div></li>
-            <li id="l2-2" draggable="true" role="option" tabindex="-1"><div>B2</div></li>
-            <li id="l2-3" draggable="true" role="option" tabindex="-1"><div>C2</div></li>
-            <li id="l2-4" draggable="true" role="option" tabindex="-1"><div>D2</div></li>
-            <li id="l2-5" draggable="true" role="option" tabindex="-1"><div>E2</div></li>
+            <li id="l2-1" draggable="true" role="option" tabindex="-1"><div>2A</div></li>
+            <li id="l2-2" draggable="true" role="option" tabindex="-1"><div>2B</div></li>
+            <li id="l2-3" draggable="true" role="option" tabindex="-1"><div>2C</div></li>
+            <li id="l2-4" draggable="true" role="option" tabindex="-1"><div>2D</div></li>
+            <li id="l2-5" draggable="true" role="option" tabindex="-1"><div>2E</div></li>
           </ul>
         </div>
         <div class="listContainer">
           <h2 id="list3-title">List 3</h2>
           <ul id="list3" class="draggableList" aria-labelledby="list3-title" tabindex="0" aria-describedby="list-description" role="listbox" aria-roledescription="listbox drag and drop">
-            <li id="l3-1" draggable="true" role="option" tabindex="-1"><div>A3</div></li>
-            <li id="l3-2" draggable="true" role="option" tabindex="-1"><div>B3</div></li>
-            <li id="l3-3" draggable="true" role="option" tabindex="-1"><div>C3</div></li>
-            <li id="l3-4" draggable="true" role="option" tabindex="-1"><div>D3</div></li>
-            <li id="l3-5" draggable="true" role="option" tabindex="-1"><div>E3</div></li>
+            <li id="l3-1" draggable="true" role="option" tabindex="-1"><div>3A</div></li>
+            <li id="l3-2" draggable="true" role="option" tabindex="-1"><div>3B</div></li>
+            <li id="l3-3" draggable="true" role="option" tabindex="-1"><div>3C</div></li>
+            <li id="l3-4" draggable="true" role="option" tabindex="-1"><div>3D</div></li>
+            <li id="l3-5" draggable="true" role="option" tabindex="-1"><div>3E</div></li>
+          </ul>
+        </div>
+      </div>
+      <div class="listsContainer">
+        <div class="listContainer">
+          <h2 id="list4-title">Tree 1</h2>
+          <ul id="list4" class="draggableList draggableTree" aria-labelledby="list4-title" tabindex="0" aria-describedby="list-description" role="listbox" aria-roledescription="listbox drag and drop">
+            <li id="l4-1" draggable="true" role="option" tabindex="-1"><div>4A</div></li>
+            <li id="l4-2" draggable="true" role="option" tabindex="-1"><div>4B</div></li>
+            <li id="l4-3" draggable="true" role="option" tabindex="-1"><div>4C</div></li>
+            <li id="l4-4" draggable="true" role="option" tabindex="-1"><div>4D</div></li>
+            <li id="l4-5" draggable="true" role="option" tabindex="-1">
+              <h2 id="list4_1-title" class="sr-only">Sub Tree 1 of Tree 1</h2>
+              <ul id="list4_1" class="draggableList draggableTree" aria-labelledby="list4_1-title"  aria-describedby="list-description" role="listbox" aria-roledescription="listbox drag and drop">
+                <li id="l4_1-1" draggable="true" role="option" tabindex="-1"><div>4_1A</div></li>
+                <li id="l4_1-2" draggable="true" role="option" tabindex="-1"><div>4_1B</div></li>
+                <li id="l4_1-3" draggable="true" role="option" tabindex="-1"><div>4_1C</div></li>
+                <li id="l4_1-4" draggable="true" role="option" tabindex="-1"><div>4_1D</div></li>
+                <li id="l4_1-5" draggable="true" role="option" tabindex="-1">
+                  <h2 id="list4_1_1-title" class="sr-only">Sub Tree 1 of Sub Tree 1 of Tree 1</h2>
+                  <ul id="list4_1_1" class="draggableList draggableTree" aria-labelledby="list4_1_1-title"  aria-describedby="list-description" role="listbox" aria-roledescription="listbox drag and drop">
+                    <li id="l4_1_1-1" draggable="true" role="option" tabindex="-1"><div>4_1_1A</div></li>
+                    <li id="l4_1_1-2" draggable="true" role="option" tabindex="-1"><div>4_1_1B</div></li>
+                    <li id="l4_1_1-3" draggable="true" role="option" tabindex="-1"><div>4_1_1C</div></li>
+                    <li id="l4_1_1-4" draggable="true" role="option" tabindex="-1"><div>4_1_1D</div></li>
+                    <li id="l4_1_1-5" draggable="true" role="option" tabindex="-1"><div>4_1_1E</div></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <div class="listContainer">
+          <h2 id="list5-title">Tree 2</h2>
+          <ul id="list5" class="draggableList draggableTree" aria-labelledby="list4-title" tabindex="0" aria-describedby="list-description" role="listbox" aria-roledescription="listbox drag and drop">
+            <li id="l5-1" draggable="true" role="option" tabindex="-1"><div>5A</div></li>
+            <li id="l5-2" draggable="true" role="option" tabindex="-1"><div>5B</div></li>
+            <li id="l5-3" draggable="true" role="option" tabindex="-1"><div>5C</div></li>
+            <li id="l5-4" draggable="true" role="option" tabindex="-1"><div>5D</div></li>
+            <li id="l5-5" draggable="true" role="option" tabindex="-1">
+              <h2 id="list5_1-title" class="sr-only">Sub Tree 1 of Tree 2</h2>
+              <ul id="list5_1" class="draggableList draggableTree" aria-labelledby="list5_1-title" aria-describedby="list-description" role="listbox" aria-roledescription="listbox drag and drop">
+                <li id="l5_1-1" draggable="true" role="option" tabindex="-1"><div>5_1A</div></li>
+                <li id="l5_1-2" draggable="true" role="option" tabindex="-1"><div>5_1B</div></li>
+                <li id="l5_1-3" draggable="true" role="option" tabindex="-1"><div>5_1C</div></li>
+                <li id="l5_1-4" draggable="true" role="option" tabindex="-1"><div>5_1D</div></li>
+                <li id="l5_1-5" draggable="true" role="option" tabindex="-1">
+                  <h2 id="list5_1_1-title" class="sr-only">Sub Tree 1 of Sub Tree 1 of Tree 2</h2>
+                  <ul id="list5_1_1" class="draggableList draggableTree" aria-labelledby="list5_1-title" aria-describedby="list-description" role="listbox" aria-roledescription="listbox drag and drop">
+                    <li id="l5_1_1-1" draggable="true" role="option" tabindex="-1"><div>5_1_1A</div></li>
+                    <li id="l5_1_1-2" draggable="true" role="option" tabindex="-1"><div>5_1_1B</div></li>
+                    <li id="l5_1_1-3" draggable="true" role="option" tabindex="-1"><div>5_1_1C</div></li>
+                    <li id="l5_1_1-4" draggable="true" role="option" tabindex="-1"><div>5_1_1D</div></li>
+                    <li id="l5_1_1-5" draggable="true" role="option" tabindex="-1"><div>5_1_1E</div></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <div class="listContainer">
+          <h2 id="list6-title">Tree 3</h2>
+          <ul id="list6" class="draggableList draggableTree" aria-labelledby="list6-title" tabindex="0" aria-describedby="list-description" role="listbox" aria-roledescription="listbox drag and drop">
+            <li id="l6-1" draggable="true" role="option" tabindex="-1"><div>6A</div></li>
+            <li id="l6-2" draggable="true" role="option" tabindex="-1"><div>6B</div></li>
+            <li id="l6-3" draggable="true" role="option" tabindex="-1"><div>6C</div></li>
+            <li id="l6-4" draggable="true" role="option" tabindex="-1"><div>6D</div></li>
+            <li id="l6-5" draggable="true" role="option" tabindex="-1">
+              <h2 id="list6_1-title" class="sr-only">Sub Tree 1 of Tree 2</h2>
+              <ul id="list6_1" class="draggableList draggableTree" aria-labelledby="list6_1-title" aria-describedby="list-description" role="listbox" aria-roledescription="listbox drag and drop">
+                <li id="l6_1-1" draggable="true" role="option" tabindex="-1"><div>6_1A</div></li>
+                <li id="l6_1-2" draggable="true" role="option" tabindex="-1"><div>6_1B</div></li>
+                <li id="l6_1-3" draggable="true" role="option" tabindex="-1"><div>6_1C</div></li>
+                <li id="l6_1-4" draggable="true" role="option" tabindex="-1"><div>6_1D</div></li>
+                <li id="l6_1-5" draggable="true" role="option" tabindex="-1">
+                  <h2 id="list6_1_1-title" class="sr-only">Sub Tree 1 of Tree 2</h2>
+                  <ul id="list6_1_1" class="draggableList draggableTree" aria-labelledby="list6_1_1-title" aria-describedby="list-description" role="listbox" aria-roledescription="listbox drag and drop">
+                    <li id="l6_1_1-1" draggable="true" role="option" tabindex="-1"><div>6_1_1A</div></li>
+                    <li id="l6_1_1-2" draggable="true" role="option" tabindex="-1"><div>6_1_1B</div></li>
+                    <li id="l6_1_1-3" draggable="true" role="option" tabindex="-1"><div>6_1_1C</div></li>
+                    <li id="l6_1_1-4" draggable="true" role="option" tabindex="-1"><div>6_1_1D</div></li>
+                    <li id="l6_1_1-5" draggable="true" role="option" tabindex="-1"><div>6_1_1E</div></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
           </ul>
         </div>
       </div>
@@ -251,6 +345,12 @@ Todo
         addDnD(list2);
         const list3 = document.querySelector("#list3");
         addDnD(list3);
+        const list4 = document.querySelector("#list4");
+        addDnD(list4);
+        const list5 = document.querySelector("#list5");
+        addDnD(list5);
+        const list6 = document.querySelector("#list6");
+        addDnD(list6);
 
         // Adds keynav
         const list1Container = document.getElementById("list1");
@@ -262,6 +362,15 @@ Todo
         const list3Container = document.getElementById("list3");
         const list3ChildrenSelector = "#list3 li";
         addKeyNav(list3Container, list3ChildrenSelector);
+        const list4Container = document.getElementById("list4");
+        const list4ChildrenSelector = "#list4 li";
+        addKeyNav(list4Container, list4ChildrenSelector);
+        const list5Container = document.getElementById("list5");
+        const list5ChildrenSelector = "#list5 li";
+        addKeyNav(list5Container, list5ChildrenSelector);
+        const list6Container = document.getElementById("list6");
+        const list6ChildrenSelector = "#list6 li";
+        addKeyNav(list6Container, list6ChildrenSelector);
       });
     </script>
   </body>
