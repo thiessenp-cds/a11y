@@ -29,6 +29,7 @@
           border-radius: 10px;
           background-color: #ccc;
           border: 2px solid black;
+          transition: background-color 1s ease-in; /* animate the color back in from a previous animate */
         }
         .draggableList li.dragElem {
           opacity: 0.4;
@@ -51,6 +52,10 @@
           position: absolute;
           white-space: nowrap; 
           width: 1px;
+        }
+        ul li.success div {
+          background-color: lightgreen;
+          transition: background-color 1s ease-in;
         }
       </style>
   </head>
@@ -150,6 +155,20 @@ Todo
           targetEl.insertAdjacentHTML("beforebegin", sourceEl.outerHTML);
           droppedEl = targetEl.previousSibling;
           droppedEl.classList.remove("dragElem");
+          
+          // Show a success animation on the dropped element
+          // Note: Timeout Related to Event loop priority 
+          // see https://stackoverflow.com/questions/45275438/css-transition-is-not-trigger-by-add-classes-in-a-same-function
+          setTimeout(() => {
+            droppedEl.classList.add("success"); 
+            setTimeout(() => {
+              droppedEl.classList.remove("success");
+            }, 1000);
+
+            droppedEl.focus();
+          }, 0);  
+
+          dragData = null;
           announce(`Item dropped with text ${droppedEl.textContent}.`);
         }
         // Clean up
@@ -161,7 +180,7 @@ Todo
         e.target.classList.remove("dragElem");
       }
 
-      let dragData = null;
+      let dragData = null;  // TODO: consider using a data attribute instead
       function addKeyNav(el, childrenSelector) {
         el.addEventListener("keydown", function(e) {
           switch (e.key) {
@@ -212,8 +231,8 @@ Todo
       // Used to allow only list items and children to be d&d
       function isTarget(e) {
         const li = e.target.closest("li");
-        if (!li) { return false; }
-        if (!this.contains(li)) { return false; }
+        if (!li) { return false; }                  // Current LI?
+        if (!this.contains(li)) { return false; }   // Current LI in current list (could be nested and an outside list )
         return true;
       }
 

@@ -1,6 +1,8 @@
 
 # a11y
-Mainly prototypes and testing
+Mainly prototypes and testing.
+
+Run the http server with: `npm run dev`
 
 ## Tests
 
