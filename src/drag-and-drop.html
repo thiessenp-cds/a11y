@@ -108,6 +108,8 @@ Todo
     </main>
     <script>
       function handleDragStart(e) {
+        if (!isTarget.call(this, e)) { return; }  // This fails to set context? isTarget(e).bind(this)
+        // Capture data to be used in drop
         e.dataTransfer.effectAllowed = "move";
         e.dataTransfer.setData("text", `${e.target.id},${e.target.parentElement.id}`); // Move by Ids
         e.target.classList.add("dragElem");
@@ -115,6 +117,7 @@ Todo
       }
 
       function handleDragOver(e) {
+        if (!isTarget.call(this, e)) { return; }
         if (e.preventDefault) { e.preventDefault(); } // Allows drop
         e.dataTransfer.dropEffect = "move";
         e.target.classList.add("dragOver");
@@ -129,6 +132,7 @@ Todo
       }
 
       function handleDrop(e, dragData) {
+        if (!isTarget.call(this, e)) { return; }
         // Useful if a E.g. link to stop navigation
         if (e.dataTransfer) {
           const isLink = e.dataTransfer.types.includes("text/uri-list");
@@ -146,7 +150,6 @@ Todo
           targetEl.insertAdjacentHTML("beforebegin", sourceEl.outerHTML);
           droppedEl = targetEl.previousSibling;
           droppedEl.classList.remove("dragElem");
-          addDnDHandlers(droppedEl);
           announce(`Item dropped with text ${droppedEl.textContent}.`);
         }
         // Clean up
@@ -156,26 +159,6 @@ Todo
       function handleDragEnd(e) {
         e.target.classList.remove("dragOver");
         e.target.classList.remove("dragElem");
-      }
-
-      function addDnDHandlers(elem) {
-        elem.addEventListener("dragstart", handleDragStart, false);
-        elem.addEventListener("dragenter", handleDragEnter, false)
-        elem.addEventListener("dragover", handleDragOver, false);
-        elem.addEventListener("dragleave", handleDragLeave, false);
-        elem.addEventListener("drop", handleDrop, false);
-        elem.addEventListener("dragend", handleDragEnd, false);
-      }
-
-      function focusNext(e, children, direction="down") {
-        const index = Array.from(children).indexOf(document.activeElement);
-        const nextIndex = index + (direction==="down" ? 1 : -1);
-        if (nextIndex < 0 || nextIndex >= children.length) {
-          return;
-        }
-        if (children[nextIndex]) {
-          children[nextIndex].focus();
-        }
       }
 
       let dragData = null;
@@ -198,14 +181,40 @@ Todo
               break;
             case "Enter":
               if (dragData) {
-                handleDrop(e, dragData);
+                handleDrop.call(this, e, dragData);
                 e.preventDefault();
               }
               break;
-            default:
-              return;
           }
         });
+      }
+
+      function focusNext(e, children, direction="down") {
+        const index = Array.from(children).indexOf(document.activeElement);
+        const nextIndex = index + (direction==="down" ? 1 : -1);
+        if (nextIndex < 0 || nextIndex >= children.length) {
+          return;
+        }
+        if (children[nextIndex]) {
+          children[nextIndex].focus();
+        }
+      }
+
+      function addDnD(el) {
+        el.addEventListener("dragstart", handleDragStart, false);
+        el.addEventListener("dragenter", handleDragEnter, false)
+        el.addEventListener("dragover", handleDragOver, false);
+        el.addEventListener("dragleave", handleDragLeave, false);
+        el.addEventListener("drop", handleDrop, false);
+        el.addEventListener("dragend", handleDragEnd, false);
+      }
+
+      // Used to allow only list items and children to be d&d
+      function isTarget(e) {
+        const li = e.target.closest("li");
+        if (!li) { return false; }
+        if (!this.contains(li)) { return false; }
+        return true;
       }
 
       const liveChannel = document.getElementById("liveChannel");
@@ -214,16 +223,15 @@ Todo
       }
 
       document.addEventListener("DOMContentLoaded", function() {
-        // See: 
-        // https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
+        // See:  https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
 
-        // TODO: use delegation instead?
-        const list1 = document.querySelectorAll("#list1 li");
-        [].forEach.call(list1, addDnDHandlers);
-        const list2 = document.querySelectorAll("#list2 li");
-        [].forEach.call(list2, addDnDHandlers);
-        const list3 = document.querySelectorAll("#list3 li");
-        [].forEach.call(list3, addDnDHandlers);
+        // Adds d&d beheviour
+        const list1 = document.querySelector("#list1");
+        addDnD(list1);
+        const list2 = document.querySelector("#list2");
+        addDnD(list2);
+        const list3 = document.querySelector("#list3");
+        addDnD(list3);
 
         // Adds keynav
         const list1Container = document.getElementById("list1");
