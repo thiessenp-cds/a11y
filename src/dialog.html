@@ -11,6 +11,12 @@
         border:1px solid; 
       }
 
+      #dialogTest .close {
+        position:absolute;
+        right: 1rem;
+        top: 1rem;
+      }
+
       /* Not working "::backdrop CSS pseudo-element is a box the size of the viewport which is rendered immediately beneath any element being presented"-MDN
       #dialogTest::backdrop {
         background:red;
@@ -24,34 +30,37 @@
   <body>
     <header>
       <h1>Dialog</h1>
+<pre>
+-Focus the first interactive element in the dialog when it opens or the header if none. <a href="https://github.com/whatwg/html/wiki/dialog--initial-focus,-a-proposal#concerns-raised-regarding-keeping-the-status-quo">WHATWG dicussion</a>
+-inert only works if dialog is outside of main so all other controls become inert (see JS below)
+
+Todo:
+-returnValue
+-Custom ARIA diaolog
+</pre>
+      <hr>
     </header>
     <main>
-      <h2>Dialog</h2>
-        <pre>
-          -"important to consider the most appropriate place to set user focus"-MDN (current input 2 in dialog)
-          -inert only works if dialog is outside of main so all other controls become inert (see JS below)
-        </pre>
-        <hr>
-        <div><button id="buttonOpen">Show dialog</button> (focus should return here)</div>
-        <br>
-        <div>(<button>extra button</button> to test returning focus from dialog)</div>
-        <br>
-        <p>TODO: returnValue, aria counterpart?, <a href="https://github.com/whatwg/html/wiki/dialog--initial-focus,-a-proposal#concerns-raised-regarding-keeping-the-status-quo">More info/discussion on initial focus question</a></p>
+      <h2>HTML Dialog</h2>
+      <div><button id="buttonOpen">Open Dialog</button> Focus should return here to the activator button.</div>
     </main>
+
     <dialog id="dialogTest">
       <!--"Warning: The tabindex attribute must not be used on the <dialog> element"-MDN -->
-      <h2>Dialog Test <button id="buttonClose">Close</button></h2>
+      <h2>Dialog Test</h2>
+      <button id="buttonClose" class="close">Close</button>
       <div>
-        <label>Input 1<input type="text"/></label>
+        <label>Input 1<input type="text" autofocus></label> Focus set here, to first interactive element using "autofocus".
       </div>
       <div>
-        <label>Input 2<input autofocus type="text" /></label>
+        <label>Input 2<input type="text" /></label>
       </div>
       <p>A poem is a literary composition, written by a poet, using this principle. Poetry has a long and varied history, evolving differentially across the globe.</p>
       <p>A poem is a literary composition, written by a poet, using this principle. Poetry has a long and varied history, evolving differentially across the globe.</p>
       <p>A poem is a literary composition, written by a poet, using this principle. Poetry has a long and varied history, evolving differentially across the globe.</p>
       <p>The End.</p>
     </dialog>
+
     <script>
       document.addEventListener("DOMContentLoaded", function() {
         const mainEl = document.querySelector("main");
