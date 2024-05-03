@@ -72,6 +72,17 @@
           border-radius: 0;
           padding: .5rem;
         }
+
+        /* Disable clicking on the arrow element and allow the event to bubble up to the parent */
+        .arrow {
+          pointer-events: none;
+        }
+        .icon-right:before {
+          content: "\25B6";
+        }
+        .icon-down:before {
+          content: "\25BC";
+        }
       </style>
   </head>
   <body>
@@ -91,12 +102,17 @@ LIST EXAMPLE SEMANTICS
 ul role=listbox (html element=select)
   li role=option (html element=option) aria-selected=BOOLEAN tabindex=-1
 
-TREE EXAMPLE SEMANTICS (TODO)
+TREE EXAMPLE SEMANTICS
 ul role=tree
   li role=treeitem aria-selected=BOOLEAN tabindex=-1  //Currently selected gets a tabindex=0
   li role=treeitem aria-expanded=BOOLEAN aria-selected=BOOLEAN tabindex=-1
     ul role=group
       li role=treeitem (same as above)
+
+TODO
+Currently treeview clicking is hacked to work with expanding titles. Keynav will be more difficult
+and require refactoring and thinking about how to enter UL list branch and focus the title for
+expand/collapse.
 </pre>
       <hr />
       <div class="listsContainer">
@@ -143,7 +159,7 @@ ul role=tree
             <li role="treeitem" aria-selected="false" id="l4-4" draggable="true" tabindex="-1"><div>4D</div></li>
             
             <li role="treeitem" aria-expanded="true" aria-selected="false" id="l4-5" draggable="true" tabindex="-1">
-              <div id="list4_1-title" class="branchTitle">Sub Tree 1 of Tree 1</div>
+              <div id="list4_1-title" class="branchTitle" tabindex="-1">Sub Tree 1 of Tree 1 <span class="arrow icon-right"></span></div>
               <ul role="group" aria-roledescription="sub tree" aria-labelledby="list4_1-title" id="list4_1" class="draggableList draggableTree">
                 <li role="treeitem" aria-selected="false" id="l4_1-1" draggable="true" tabindex="-1"><div>4_1A</div></li>
                 <li role="treeitem" aria-selected="false" id="l4_1-2" draggable="true" tabindex="-1"><div>4_1B</div></li>
@@ -151,7 +167,7 @@ ul role=tree
                 <li role="treeitem" aria-selected="false" id="l4_1-4" draggable="true" tabindex="-1"><div>4_1D</div></li>
                 
                 <li role="treeitem" aria-expanded="true" aria-selected="false" id="l4_1-5" draggable="true" tabindex="-1">
-                  <div id="list4_1_1-title" class="branchTitle">Sub Tree 1 of Sub Tree 1 of Tree 1</div>
+                  <div id="list4_1_1-title" class="branchTitle" tabindex="-1">Sub Tree 1 of Sub Tree 1 of Tree 1 <span class="arrow icon-right"></span></div>
                   <ul role="group" aria-roledescription="sub tree" aria-labelledby="list4_1_1-title"  aria-describedby="list-description" id="list4_1_1" class="draggableList draggableTree">
                     <li role="treeitem" aria-selected="false" id="l4_1_1-1" draggable="true" tabindex="-1"><div>4_1_1A</div></li>
                     <li role="treeitem" aria-selected="false" id="l4_1_1-2" draggable="true" tabindex="-1"><div>4_1_1B</div></li>
@@ -340,35 +356,29 @@ ul role=tree
         el.addEventListener("dragend", handleDragEnd, false);
       }
 
-
-
-
-
-// TODO Add keyboard behavior
-// TODO add to other trees and clean up then send vid on monday, explain useful for screen reader testing to know whether X is a screen reader or lib bug
-
-
-
-
-      function addTreeview(element) {
+      function addTreeviewBehavior(element) {
         const subTreeEls = element.querySelectorAll("[aria-expanded]");
+        function treeViewHandler(e) {
+          if (!e.target.classList.contains("branchTitle")) { return; } 
+
+          const parentEl = e.target.parentElement;
+          const branchEl = parentEl.querySelector("[role=group]");
+          const isExpanded = !(parentEl.getAttribute("aria-expanded") === "true");
+          const arrowEl = parentEl.querySelector(".arrow");
+          // Toggle it
+          parentEl.setAttribute("aria-expanded", isExpanded);
+          isExpanded ? arrowEl.classList.replace("icon-down", "icon-right") : arrowEl.classList.replace("icon-right", "icon-down");
+          isExpanded ? branchEl.removeAttribute("hidden") : branchEl.setAttribute("hidden", true);
+          // On nested trees, this stops the event being handled twice
+          e.stopPropagation();
+        }
         subTreeEls.forEach((el) => {
-          el.addEventListener("click", function(e) {
-            // debugger;
-
-            const parentEl = e.target.parentElement
-            const branchEl = parentEl.querySelector("[role=group]");
-            const isExpanded = !(parentEl.getAttribute("aria-expanded") === "true");
-
-            // Toggle it
-            parentEl.setAttribute("aria-expanded", isExpanded);
-            if (isExpanded) {
-              branchEl.removeAttribute("hidden");
-            } else {
-              branchEl.setAttribute("hidden", true);
+          el.addEventListener("click", treeViewHandler, false);
+          el.addEventListener("keydown", function(e)  { 
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              treeViewHandler(e);
             }
-            // Stops being executed twice. May interfere with drag and drop?
-            e.stopPropagation();
           }, false);
         })
       }
@@ -424,7 +434,7 @@ ul role=tree
         addKeyNav(list6Container, list6ChildrenSelector);
 
         // Adds treeview
-        addTreeview(list4);
+        addTreeviewBehavior(list4);
       });
     </script>
   </body>
